@@ -17,7 +17,7 @@ class API(ABC):
 class HH(API):
     def __init__(self, keyword):
         self.__url = 'https://api.hh.ru/vacancies'
-        self.__params = {'text': keyword, 'page': 0, 'per_page': 10, 'only_with_salary': True, 'currency': 'RUR'}
+        self.__params = {'text': keyword, 'page': 0, 'per_page': 100, 'only_with_salary': True, 'currency': 'RUR'}
         self.__vacancies = []
 
 

@@ -1,54 +1,81 @@
 from src.api import HH
 
 
-class Vacancies:
-
-
+class Vacancy:
     __slots__ = ('name', '_salary', 'url', 'responsibility')
 
-    def __init__(self, name, salary, url, responsibility):
+    def __init__(
+        self,
+        name: str,
+        salary: dict[str, None | int] | None,
+        url: str,
+        responsibility: str,
+    ) -> None:
         self.name = name
-        self._salary = salary
+        self.salary = salary
         self.url = url
         self.responsibility = responsibility
 
     @property
-    def salary(self):
+    def salary(self) -> float:
         return self._salary
 
     @salary.setter
-    def salary(self, value):
-        if type(value['from']) is int:
-            if type(value['to']) is int:
-                self._salary = (value['to'] + value['from']) / 2
+    def salary(self, value: dict[str, None | int] | None) -> None:
+        """
+        Ожидается словарь формата:
+        {
+            "from": int | None,
+            "to": int | None
+        }
 
-            else:
-                self._salary = value['from']
+        Логика:
+        - если есть from и to → берём среднее
+        - если есть только from → берём from
+        - если есть только to → берём to
+        - если данных нет или они некорректны → 0
+        """
 
-        elif type(value['to']) is int:
-            self._salary = value['to']
+        if not isinstance(value, dict):
+            self._salary = 0
+            return
 
+        salary_from = value.get('from')
+        salary_to = value.get('to')
+
+        if isinstance(salary_from, int) and isinstance(salary_to, int):
+            self._salary = (salary_from + salary_to) / 2
+        elif isinstance(salary_from, int):
+            self._salary = float(salary_from)
+        elif isinstance(salary_to, int):
+            self._salary = float(salary_to)
         else:
             self._salary = 0
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Vacancy):
+            return NotImplemented
+        return self.salary == other.salary
 
-    def __gt__(self, other):
-        return self.salary > other
-    def __lt__(self, other):
-        return self.salary < other
-    def __ge__(self, other):
-        return self.salary >= other
-    def __le__(self, other):
-        return self.salary <= other
+    def __gt__(self, other: object) -> bool:
+        if not isinstance(other, Vacancy):
+            return NotImplemented
+        return self.salary > other.salary
 
-    def cast_to_dict(self):
-        return {'name': self.name, 'salary': self.salary, 'url': self.url, 'responsibility': self.responsibility}
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, Vacancy):
+            return NotImplemented
+        return self.salary < other.salary
+
+    def cast_to_dict(self) -> dict[str, (str | float)]:
+        return {
+            'name': self.name,
+            'salary': self.salary,
+            'url': self.url,
+            'responsibility': self.responsibility
+        }
 
 
 
-raw_vacancies = HH.load_vacancies()
-vacancy_objects = []
-for vac in raw_vacancies:
-    v = Vacancies(name=vac['name'], salary=vac['salary'], url=vac['alternate_url'], responsibility=vac['responsibility'])
-    vacancy_objects.append(v)
+
 
