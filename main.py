@@ -4,6 +4,7 @@ from src.vacancies import Vacancy
 from src.utils import JSONFileWorker
 
 def main():
+    "Основная функция взаимодействия с пользователем"
     user_input = input("Введите название вакансии: ")
     user_number = int(input("Введите количество вакансий для вывода в топ N: "))
     salary_range = int(input("Введите минимальную зарплату в рублях: "))
@@ -22,7 +23,7 @@ def main():
         )
         vacancies.append(vacancy)
 
-    sorted_dict = sorted(vacancies)
+    sorted_dict = sorted(vacancies, reverse=True)
 
 
     vacancies_dict = []
@@ -37,10 +38,9 @@ def main():
         'salary': vacancy.salary,
         'url': vacancy.url,
         'responsibility': vacancy.responsibility
-    } for vacancy in vacancies], salary_range)
+    } for vacancy in sorted_dict], salary_range)
     print('Отфильтрованные вакансии: ')
     for vacancy in filtered_vacancies[:user_number]:
-        # print(vacancy)
         print(f'Название вакансии: {vacancy['name']}, Зарплата: {vacancy['salary']} рублей, URL: {vacancy['url']}, Описание: {vacancy['responsibility']}')
 
 

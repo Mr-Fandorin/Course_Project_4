@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 
 
 class FileWorker(ABC):
+    "Абстрактный класс для работы с файлом"
 
     @abstractmethod
     def get_data(self):
@@ -18,11 +19,13 @@ class FileWorker(ABC):
 
 
 class JSONFileWorker(FileWorker):
+    "Класс для работы с файлом JSON"
 
     def __init__(self, filename: str = "vacancies.json"):
         self.filename = filename
 
     def get_data(self):
+        "Получение данных из файла"
         try:
             with open(self.filename, "r", encoding="utf-8") as f:
                 return json.load(f)
@@ -30,6 +33,7 @@ class JSONFileWorker(FileWorker):
             return []
 
     def save_data(self, new_data: list[dict[str, (int | str)]]):
+        "Добавление данных в файл"
         # Получаем данные из файла (старые вакансии)
         old_data = self.get_data()
         # Проходим по каждой новой вакансии
@@ -53,8 +57,6 @@ class JSONFileWorker(FileWorker):
             json.dump(old_data, f, ensure_ascii=False, indent=2)
 
     def file_delete(self):
+        "Удаление данных из файла"
         with open(self.filename, "w", encoding="utf-8") as f:
             json.dump([], f, ensure_ascii=False, indent=4)
-
-
-

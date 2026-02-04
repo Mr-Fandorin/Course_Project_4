@@ -2,7 +2,9 @@ from src.api import HH
 
 
 class Vacancy:
-    __slots__ = ('name', '_salary', 'url', 'responsibility')
+    "Класс для работы с вакансиями"
+
+    __slots__ = ("name", "_salary", "url", "responsibility")
 
     def __init__(
         self,
@@ -22,6 +24,7 @@ class Vacancy:
 
     @salary.setter
     def salary(self, value: dict[str, None | int] | None) -> None:
+        "Валидация данных по зарплате"
         """
         Ожидается словарь формата:
         {
@@ -40,8 +43,8 @@ class Vacancy:
             self._salary = 0
             return
 
-        salary_from = value.get('from')
-        salary_to = value.get('to')
+        salary_from = value.get("from")
+        salary_to = value.get("to")
 
         if isinstance(salary_from, int) and isinstance(salary_to, int):
             self._salary = (salary_from + salary_to) / 2
@@ -53,29 +56,23 @@ class Vacancy:
             self._salary = 0
 
     def __eq__(self, other: object) -> bool:
+        "Проверяет равенство двух объектов Vacancy по зарплате"
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary == other.salary
 
     def __gt__(self, other: object) -> bool:
+        "Проверяет больше ли зарплата текущего объекта Vacancy по зарплате"
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary > other.salary
 
     def __lt__(self, other: object) -> bool:
+        "Проверяет меньше ли зарплата текущего объекта Vacancy по зарплате"
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary < other.salary
 
     def cast_to_dict(self) -> dict[str, (str | float)]:
-        return {
-            'name': self.name,
-            'salary': self.salary,
-            'url': self.url,
-            'responsibility': self.responsibility
-        }
-
-
-
-
-
+        "Перевод данных в словарь"
+        return {"name": self.name, "salary": self.salary, "url": self.url, "responsibility": self.responsibility}

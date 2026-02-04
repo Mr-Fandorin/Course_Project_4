@@ -4,6 +4,7 @@ import requests
 
 
 class API(ABC):
+    "Абстрактный класс для загрузки Вакансий"
 
     @abstractmethod
     def _api_connect(self, keyword):
@@ -15,29 +16,30 @@ class API(ABC):
 
 
 class HH(API):
-    def __init__(self, keyword):
-        self.__url = 'https://api.hh.ru/vacancies'
-        self.__params = {'text': keyword, 'page': 0, 'per_page': 100, 'only_with_salary': True, 'currency': 'RUR'}
+    "Класс для загрузки Вакансий с HeadHunter"
+
+    def __init__(self, keyword: str) -> None:
+        self.__url = "https://api.hh.ru/vacancies"
+        self.__params = {"text": keyword, "page": 0, "per_page": 100, "only_with_salary": True, "currency": "RUR"}
         self.__vacancies = []
 
-
-    def _api_connect(self, keyword):
-        self.__params['text'] = keyword
+    def _api_connect(self, keyword: str) -> requests.Response:
+        "Выполнение API запроса"
+        self.__params["text"] = keyword
         response = requests.get(self.__url, params=self.__params)
         if response.status_code != 200:
             raise ValueError("Failed to get info")
         return response
 
-    def load_vacancies(self):
-        while self.__params.get('page') != 20:
-            vacancies = self._api_connect(self.__params['text']).json()['items']
+    def load_vacancies(self) -> list:
+        "Получение Вакансий"
+        while self.__params.get("page") != 20:
+            vacancies = self._api_connect(self.__params["text"]).json()["items"]
             self.__vacancies.extend(vacancies)
-            self.__params['page'] += 1
+            self.__params["page"] += 1
         return self.__vacancies
 
 
-
 if __name__ == "__main__":
-    a = HH('python')
+    a = HH("python")
     print(a.load_vacancies())
-
